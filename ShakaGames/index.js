@@ -1,8 +1,8 @@
 // Configurações Iniciais
+require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const app = express()
-const Person = require('./models/Person')
 
 //Forma de ler o JSON
 app.use(express.urlencoded({
@@ -10,27 +10,9 @@ app.use(express.urlencoded({
 }))
 app.use(express.json())
 //Rotas da API
-app.post('/jogo', async (req, res) => {
-    //req.body
-    const{nome, valor, vendido} = req.body
+const jogosRoutes = require('./routes/jogosRoutes')
 
-    if(!nome){
-        res.status(422).json({message:'Precisa-se colocar o nome'})
-    }
-
-    const person = {
-        nome,
-        valor,
-        vendido
-    }
-
-    try {
-        await Person.create(person)
-        res.status(201).json({menssagem :'Jogo adicionado com sucesso!'})
-    } catch (error) {
-        res.status(500).json({message: "falha ao adicionar"})
-    }
-})
+app.use('/jogos', jogosRoutes)
 //Rota inicial / endpoint
 app.get('/', (req, res) => {
     res.json({
@@ -38,8 +20,8 @@ app.get('/', (req, res) => {
     })
 })
 
-const DB_USER = 'leonardo'
-const DB_PASSWORD = encodeURIComponent('leo347141')
+const DB_USER = process.env.DB_USER
+const DB_PASSWORD = encodeURIComponent(process.env.DB_PASSWORD)
 
 
 mongoose
